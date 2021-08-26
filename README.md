@@ -1,4 +1,4 @@
-# ProjetoMultiagentePacman-
+# projetomultiagentepacman
 Projeto de Implementação de Sistemas Multiagentes
 Esse projeto teve como objetivo uma implementação de um sistema de inteligencia artificial multiagente.
 Foi proposto na discipl na disciplina de  Introdução aos Agentes  Inteligentes do programa de pós graduação do Cin-UFPE.

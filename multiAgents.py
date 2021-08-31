@@ -22,7 +22,6 @@ class ReflexAgent(Agent):
     """
       A reflex agent chooses an action at each choice point by examining
       its alternatives via a state evaluation function.
-
       The code below is provided as a guide.  You are welcome to change
       it in any way you see fit, so long as you don't touch our method
       headers.
@@ -32,9 +31,7 @@ class ReflexAgent(Agent):
     def getAction(self, gameState):
         """
         You do not need to change this method, but you're welcome to.
-
         getAction chooses among the best options according to the evaluation function.
-
         Just like in the previous project, getAction takes a GameState and returns
         some Directions.X for some X in the set {North, South, West, East, Stop}
         """
@@ -54,15 +51,12 @@ class ReflexAgent(Agent):
     def evaluationFunction(self, currentGameState, action):
         """
         Design a better evaluation function here.
-
         The evaluation function takes in the current and proposed successor
         GameStates (pacman.py) and returns a number, where higher numbers are better.
-
         The code below extracts some useful information from the state, like the
         remaining food (newFood) and Pacman position after moving (newPos).
         newScaredTimes holds the number of moves that each ghost will remain
         scared because of Pacman having eaten a power pellet.
-
         Print out these variables to see what you're getting, then combine them
         to create a masterful evaluation function.
         """
@@ -98,7 +92,6 @@ def scoreEvaluationFunction(currentGameState):
     """
       This default evaluation function just returns the score of the state.
       The score is the same one displayed in the Pacman GUI.
-
       This evaluation function is meant for use with adversarial search agents
       (not reflex agents).
     """
@@ -109,11 +102,9 @@ class MultiAgentSearchAgent(Agent):
       This class provides some common elements to all of your
       multi-agent searchers.  Any methods defined here will be available
       to the MinimaxPacmanAgent, AlphaBetaPacmanAgent & ExpectimaxPacmanAgent.
-
       You *do not* need to make any changes here, but you can if you want to
       add functionality to all your adversarial search agents.  Please do not
       remove anything, however.
-
       Note: this is an abstract class: one that should not be instantiated.  It's
       only partially specified, and designed to be extended.  Agent (game.py)
       is another abstract class.
@@ -170,8 +161,8 @@ class MinimaxAgent(MultiAgentSearchAgent):
           cost = self.get_min(successor, depth, agent + 1)[0]
 
       if cost < successorCost:
-          successorCost = cost
-          successorAction = action
+        successorCost = cost
+        successorAction = action
     return successorCost, successorAction
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
@@ -234,14 +225,12 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
   """
 
   def getAction(self, gameState):
-
     depth = 0
     return self.get_max(gameState, depth)[1]
-  # alpha = max best option
-  # beta = min best
-  def get_max(self, gameState, depth, agent = 0, alpha=float('-inf'), beta=float('inf')):
+
+  def get_max(self, gameState, depth, agent = 0):
     actions = gameState.getLegalActions(agent)
-    successorCost = alpha
+    successorCost = 0
     successorAction = Directions.STOP
     if not actions or gameState.isWin() or depth >= self.depth:
       return self.evaluationFunction(gameState), Directions.STOP
@@ -249,46 +238,36 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
     for action in actions:
       successor = gameState.generateSuccessor(agent, action)
 
-      cost = self.get_min(successor, depth, agent + 1, alpha=successorCost, beta=beta)[0]
+      cost = self.get_min(successor, depth, agent + 1)[0]
 
       if cost > successorCost:
         successorCost = cost
-        successorAction = action
-        alpha = successorCost
-      if successorCost >= beta: # PODA
-        return successorCost, successorAction
-  
+        successorAction = action  
     return successorCost, successorAction
 
-  def get_min(self, gameState, depth, agent, alpha=float('-inf'), beta=float('inf')):
+  def get_min(self, gameState, depth, agent):
     actions = gameState.getLegalActions(agent)
 
     if not actions or gameState.isLose() or depth >= self.depth:
       return self.evaluationFunction(gameState), Directions.STOP
 
-    successorCost = beta
     successorAction = Directions.STOP
-
+    expectMax = 0.0
     for action in actions:
       successor = gameState.generateSuccessor(agent, action)
 
       if agent == gameState.getNumAgents() - 1:
-        cost = self.get_max(successor, depth + 1, alpha=alpha, beta=beta)[0]
+        cost = self.get_max(successor, depth + 1)[0]
       else:
-        cost = self.get_min(successor, depth, agent + 1, alpha=alpha, beta=successorCost)[0]
-      if cost < successorCost:
-        successorCost = cost
-        successorAction = action
-        beta = successorCost
-      if successorCost <= alpha: # PODA
-        return successorCost, successorAction
-    return successorCost, successorAction
+        cost = self.get_min(successor, depth, agent + 1)[0]
+      expectMax += cost
+    expectMax = float(expectMax) / len(action) + 1
+    return expectMax, successorAction
 
 def betterEvaluationFunction(currentGameState):
     """
       Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
       evaluation function (question 5).
-
       DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
@@ -296,4 +275,3 @@ def betterEvaluationFunction(currentGameState):
 
 # Abbreviation
 better = betterEvaluationFunction
-
